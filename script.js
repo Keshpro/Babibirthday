@@ -1,3 +1,4 @@
+
 // 1. 3D Scene Setup
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -44,7 +45,7 @@ scene.add(light, new THREE.AmbientLight(0xffffff, 0.6));
 // Populate Objects
 for (let i = 0; i < 50; i++) {
     const obj = Math.random() > 0.5 ? createHeart() : createBalloon();
-    obj.position.set((Math.random()-0.5)*100, (Math.random()-0.5)*100, (Math.random()-0.5)*40);
+    obj.position.set((Math.random() - 0.5) * 100, (Math.random() - 0.5) * 100, (Math.random() - 0.5) * 40);
     scene.add(obj);
     objects.push(obj);
 }
@@ -95,3 +96,85 @@ window.addEventListener('resize', () => {
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
 });
+
+function nextScreen(num) {
+    // Hide all screens
+    document.querySelectorAll(".screen").forEach(s => {
+        s.style.display = "none";
+        s.classList.remove("active");
+    });
+
+    const currentScreen = document.getElementById("screen" + num);
+    currentScreen.style.display = "flex";
+    currentScreen.classList.add("active");
+
+    if (num === 4) {
+        const video = document.getElementById("bdayVideo");
+        const endContent = document.getElementById("endContent");
+
+        // Ensure video starts
+        video.play().catch(e => console.log("Playback interaction required"));
+
+        video.onended = () => {
+            // Fade out video
+            video.style.opacity = "0";
+
+            setTimeout(() => {
+                video.style.display = "none";
+
+                // Show the container (Image + Text)
+                endContent.style.display = "flex";
+
+                // Small delay to trigger the CSS opacity transition
+                setTimeout(() => {
+                    endContent.style.opacity = "1";
+
+                    // Update 3D background for the finale
+                    if (typeof objects !== 'undefined') {
+                        document.body.style.background = "radial-gradient(circle, #2a0033, #000)";
+                    }
+                }, 50);
+            }, 1000);
+        };
+    }
+}
+
+function nextScreen(num) {
+    document.querySelectorAll(".screen").forEach(s => {
+        s.style.display = "none";
+        s.classList.remove("active");
+    });
+
+    const currentScreen = document.getElementById("screen" + num);
+    currentScreen.style.display = "flex";
+    currentScreen.classList.add("active");
+
+    if (num === 4) {
+        const video = document.getElementById("bdayVideo");
+        const endContent = document.getElementById("endContent");
+
+        video.play().catch(e => console.log("User interaction needed"));
+
+        video.onended = () => {
+            // Fade out the video
+            video.style.opacity = "0";
+
+            setTimeout(() => {
+                video.style.display = "none";
+                
+                // Show the collage and wish
+                endContent.style.display = "flex";
+                
+                // Small delay to ensure display:flex is registered before fading in
+                setTimeout(() => {
+                    endContent.style.opacity = "1";
+                    // Add a romantic dark glow to the background
+                    document.body.style.background = "radial-gradient(circle, #2a0033, #000)";
+                }, 50);
+            }, 1000);
+        };
+    }
+}
+
+// Initial 3D Setup (Assume your existing 3D Heart/Balloon code is here)
+// ... (Your Three.js code)
