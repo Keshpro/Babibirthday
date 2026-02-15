@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Birthday Surprise ❤️</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+
+    <canvas id="bg3d"></canvas>
+
+    <div id="screen1" class="screen active">
+        <div class="content-overlay">
+            <h1>Happy Birthday Mage Manika❤️🎉</h1>
+            <button onclick="nextScreen(2)">Thank You</button>
+        </div>
+    </div>
+
+    <div id="screen2" class="screen bg-minion1">
+        <div class="content-overlay">
+            <h2>Are you sure this is your birthday? 😄</h2>
+            <button onclick="nextScreen(3)">Yes</button>
+        </div>
+    </div>
+
+    <div id="screen3" class="screen bg-minion2">
+        <div class="content-overlay">
+            <h2>I know that long-distance relationships are the most hardest thing By the way<br> Many Happy Returns OF the day Sudu Nona❤️❤️
+            </h2>
+            <button onclick="nextScreen(4)">Open my little Surprise</button>
+        </div>
+    </div>
+
+    <div id="screen4" class="screen">
+        <video id="bdayVideo" playsinline>
+            <source src="assets/miniv.mp4" type="video/mp4">
+        </video>
+        <img src="">
+        <h2 id="finalWish">You are the best thing in my life ❤️<br>Today isn't just a celebration of the day you were born; it’s a celebration of the beautiful soul you are and the light you bring into my world every single day. I promise to keep choosing you, keep loving you, and keep making beautiful memories by your side.</h2>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
