@@ -1,5 +1,4 @@
-
-// 1. 3D Scene Setup
+// --- 1. 3D Scene Setup ---
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 const renderer = new THREE.WebGLRenderer({ canvas: document.querySelector('#bg3d'), alpha: true, antialias: true });
@@ -8,7 +7,7 @@ camera.position.z = 45;
 
 const objects = [];
 
-// Function: 3D Heart
+// Function: Create 3D Heart
 function createHeart() {
     const shape = new THREE.Shape();
     shape.moveTo(0, 0);
@@ -25,7 +24,7 @@ function createHeart() {
     return mesh;
 }
 
-// Function: 3D Balloon
+// Function: Create 3D Balloon
 function createBalloon() {
     const group = new THREE.Group();
     const body = new THREE.Mesh(new THREE.SphereGeometry(2, 20, 20), new THREE.MeshPhongMaterial({ color: 0xffd700 }));
@@ -37,12 +36,12 @@ function createBalloon() {
     return group;
 }
 
-// Lights
+// Setup Lights
 const light = new THREE.PointLight(0xffffff, 1, 100);
 light.position.set(10, 10, 10);
 scene.add(light, new THREE.AmbientLight(0xffffff, 0.6));
 
-// Populate Objects
+// Populate 3D Objects
 for (let i = 0; i < 50; i++) {
     const obj = Math.random() > 0.5 ? createHeart() : createBalloon();
     obj.position.set((Math.random() - 0.5) * 100, (Math.random() - 0.5) * 100, (Math.random() - 0.5) * 40);
@@ -50,19 +49,23 @@ for (let i = 0; i < 50; i++) {
     objects.push(obj);
 }
 
-// 2. Animation Logic
+// --- 2. Animation Loop ---
 function animate() {
     requestAnimationFrame(animate);
-    const isScreen4 = document.getElementById('screen4').classList.contains('active');
+    
+    // Check if we are on Screen 4
+    const screen4 = document.getElementById('screen4');
+    const isScreen4 = screen4 && screen4.classList.contains('active');
 
     objects.forEach(obj => {
         if (isScreen4) {
-            obj.position.y += 0.3; // Screen 4 nam uda yanawa
+            obj.position.y += 0.3; // Floating UP on Screen 4
             obj.rotation.x += 0.02;
         } else {
-            obj.position.y -= 0.15; // Anith welawata wessak wage wetenawa
+            obj.position.y -= 0.15; // Raining DOWN on other screens
         }
 
+        // Reset positions when they go off screen
         if (obj.position.y < -55) obj.position.y = 55;
         if (obj.position.y > 55) obj.position.y = -55;
         obj.rotation.y += 0.01;
@@ -71,89 +74,28 @@ function animate() {
 }
 animate();
 
-// 3. Navigation
+// --- 3. Navigation & Video Logic ---
 function nextScreen(num) {
-    document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
-    document.getElementById("screen" + num).classList.add("active");
-
-    if (num === 4) {
-        const video = document.getElementById("bdayVideo");
-        const wish = document.getElementById("finalWish");
-        video.play();
-        video.onended = () => {
-            video.style.opacity = "0";
-            setTimeout(() => {
-                video.style.display = "none";
-                wish.style.opacity = "1";
-                document.body.style.background = "radial-gradient(circle, #2a0033, #000)";
-            }, 1000);
-        };
-    }
-}
-
-window.addEventListener('resize', () => {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-});
-
-function nextScreen(num) {
-    // Hide all screens
+    // 1. Hide all screens and remove active class
     document.querySelectorAll(".screen").forEach(s => {
         s.style.display = "none";
         s.classList.remove("active");
     });
 
+    // 2. Show the target screen
     const currentScreen = document.getElementById("screen" + num);
-    currentScreen.style.display = "flex";
-    currentScreen.classList.add("active");
-
-    if (num === 4) {
-        const video = document.getElementById("bdayVideo");
-        const endContent = document.getElementById("endContent");
-
-        // Ensure video starts
-        video.play().catch(e => console.log("Playback interaction required"));
-
-        video.onended = () => {
-            // Fade out video
-            video.style.opacity = "0";
-
-            setTimeout(() => {
-                video.style.display = "none";
-
-                // Show the container (Image + Text)
-                endContent.style.display = "flex";
-
-                // Small delay to trigger the CSS opacity transition
-                setTimeout(() => {
-                    endContent.style.opacity = "1";
-
-                    // Update 3D background for the finale
-                    if (typeof objects !== 'undefined') {
-                        document.body.style.background = "radial-gradient(circle, #2a0033, #000)";
-                    }
-                }, 50);
-            }, 1000);
-        };
+    if (currentScreen) {
+        currentScreen.style.display = "flex";
+        currentScreen.classList.add("active");
     }
-}
 
-function nextScreen(num) {
-    document.querySelectorAll(".screen").forEach(s => {
-        s.style.display = "none";
-        s.classList.remove("active");
-    });
-
-    const currentScreen = document.getElementById("screen" + num);
-    currentScreen.style.display = "flex";
-    currentScreen.classList.add("active");
-
+    // 3. Screen 4 Specific Surprise Logic
     if (num === 4) {
         const video = document.getElementById("bdayVideo");
         const endContent = document.getElementById("endContent");
 
-        video.play().catch(e => console.log("User interaction needed"));
+        // Try to play the video (browsers might block sound initially)
+        video.play().catch(e => console.log("User interaction required for video"));
 
         video.onended = () => {
             // Fade out the video
@@ -161,20 +103,26 @@ function nextScreen(num) {
 
             setTimeout(() => {
                 video.style.display = "none";
-                
-                // Show the collage and wish
-                endContent.style.display = "flex";
-                
-                // Small delay to ensure display:flex is registered before fading in
-                setTimeout(() => {
-                    endContent.style.opacity = "1";
-                    // Add a romantic dark glow to the background
-                    document.body.style.background = "radial-gradient(circle, #2a0033, #000)";
-                }, 50);
-            }, 1000);
+
+                // Show the Collage Image and Final Wish
+                if (endContent) {
+                    endContent.style.display = "flex";
+                    
+                    // Trigger fade-in
+                    setTimeout(() => {
+                        endContent.style.opacity = "1";
+                        // Romantic background change
+                        document.body.style.background = "radial-gradient(circle, #2a0033, #000)";
+                    }, 50);
+                }
+            }, 1000); // 1-second delay for fade-out
         };
     }
 }
 
-// Initial 3D Setup (Assume your existing 3D Heart/Balloon code is here)
-// ... (Your Three.js code)
+// Handle Window Resizing
+window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+});

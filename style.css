@@ -1,3 +1,4 @@
+/* General Reset */
 body, html {
     margin: 0;
     padding: 0;
@@ -5,9 +6,9 @@ body, html {
     height: 100%;
     overflow: hidden;
     background: #000000;
-    
 }
 
+/* 3D Canvas - stays at the very back */
 #bg3d {
     position: fixed;
     top: 0;
@@ -15,6 +16,7 @@ body, html {
     z-index: 1;
 }
 
+/* Screen Layouts */
 .screen {
     position: absolute;
     width: 100%;
@@ -23,7 +25,7 @@ body, html {
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    z-index: 2;
+    z-index: 5; /* Increased to stay above 3D canvas */
     text-align: center;
     background-size: cover;
     background-position: center;
@@ -33,27 +35,29 @@ body, html {
     display: flex;
 }
 
+/* Glassmorphism boxes for text */
 .content-overlay {
-    background: rgba(0, 0, 0, 0.65);
+    background: rgba(0, 0, 0, 0.75); /* Slightly darker for better readability */
     padding: 25px;
     border-radius: 20px;
-    backdrop-filter: blur(5px);
+    backdrop-filter: blur(8px);
     width: 85%;
     max-width: 450px;
-    color: white;
+    color: #ffffff; /* Explicitly white font */
+    box-sizing: border-box;
 }
 
-/* Responsive Font Sizes */
-h1 { font-size: 1.8rem; margin-bottom: 20px; }
+/* Typography Colors */
+.content-overlay h1, 
+.content-overlay h2 {
+    color: #ffffff;
+    margin-bottom: 20px;
+}
+
+h1 { font-size: 1.8rem; }
 h2 { font-size: 1.3rem; line-height: 1.4; }
 
-@media (max-width: 480px) {
-    h1 { font-size: 1.5rem; }
-    h2 { font-size: 1.1rem; }
-    #finalTitle { font-size: 1.2rem !important; }
-    #finalMessage { font-size: 0.85rem !important; }
-}
-
+/* Buttons */
 button {
     padding: 12px 30px;
     background: #ff4d6d;
@@ -64,14 +68,54 @@ button {
     cursor: pointer;
     font-size: 1rem;
     margin-top: 20px;
+    transition: transform 0.2s;
 }
 
-/* Screen 2 background */
+button:active {
+    transform: scale(0.95);
+}
+
+/* Background GIFs */
 .bg-minion1 { 
     background-image: url('assets/minions.gif'); 
 }
 
-/* Screen 3 background */
 .bg-minion2 { 
     background-image: url('assets/mini2.gif'); 
+}
+
+/* Final Reveal Content (Screen 4) */
+#endContent {
+    z-index: 999; /* Ensure this is on top of everything */
+    pointer-events: auto;
+}
+
+#finalTitle {
+    color: #ff4d6d !important; /* Keep the main title pink/red */
+    text-shadow: 0 0 10px rgba(255, 77, 109, 0.5);
+}
+
+#finalMessage {
+    color: #ffffff !important; /* Ensure the long message is white */
+}
+
+/* Mobile Responsive Adjustments */
+@media (max-width: 480px) {
+    .content-overlay {
+        padding: 20px;
+        width: 90%;
+    }
+    
+    h1 { font-size: 1.4rem; }
+    h2 { font-size: 1.1rem; }
+    
+    #finalTitle { 
+        font-size: 1.2rem !important; 
+        margin-bottom: 8px !important;
+    }
+    
+    #finalMessage { 
+        font-size: 0.85rem !important;
+        line-height: 1.5 !important;
+    }
 }
