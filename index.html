@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Birthday Surprise For my love❤️</title>
+    <title>My Love, My Universe ❤️</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
@@ -11,42 +12,52 @@
 
     <canvas id="bg3d"></canvas>
 
-    <div id="screen1" class="screen active">
-        <div class="content-overlay">
-            <h1>Happy Birthday Mage Manika❤️🎉</h1>
-            <button onclick="nextScreen(2)">Thank You</button>
-        </div>
-    </div>
-
-    <div id="screen2" class="screen bg-minion1">
-        <div class="content-overlay">
-            <h2>Are you sure this is your birthday? 😄</h2>
-            <button onclick="nextScreen(3)">Yes</button>
-        </div>
-    </div>
-
-    <div id="screen3" class="screen bg-minion2">
-        <div class="content-overlay">
-            <h2 class="mobile-text">I know that long-distance relationships are the hardest thing. By the way, many happy returns of the day Sudu Nona❤️❤️</h2>
-            <button onclick="nextScreen(4)">Open my little Surprise</button>
-        </div>
-    </div>
-
-    <div id="screen4" class="screen">
-        <video id="bdayVideo" playsinline webkit-playsinline style="width: 90%; max-width: 500px; border-radius: 15px; transition: opacity 1s ease; z-index: 10;">
-            <source src="assets/miniv.mp4" type="video/mp4">
-        </video>
-
-        <div id="endContent" style="display: none; opacity: 0; flex-direction: column; align-items: center; width: 95%; max-width: 600px; transition: opacity 2s ease; padding: 10px; z-index: 999;">
-            <img src="assets/img.png" alt="Our Collage" style="width: 100%; max-width: 380px; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.5);">
-            
-            <div class="wish-container" style="text-align: center; padding: 0 10px;">
-                <h2 id="finalTitle" style="font-size: 1.4rem; color: #ff4d6d; margin: 0 0 10px 0;">You are the best thing in my life ❤️</h2>
-                <p id="finalMessage" style="font-size: 0.95rem; line-height: 1.5; color: #ffffff; font-style: italic; margin: 0;">
-                    Today isn't just a celebration of the day you were born; it’s a celebration of the beautiful soul you are and the light you bring into my world every single day. I promise to keep choosing you, keep loving you, and keep making beautiful memories by your side.
-                </p>
+    <div id="ui-layer">
+        
+        <div id="screen1" class="screen active">
+            <div class="glass-panel">
+                <h1>Happy Birthday Mage Manika ❤️🎉</h1>
+                <p class="subtitle">Welcome to our universe...</p>
+                <button onclick="nextScreen(2)">Enter Here</button>
             </div>
         </div>
+
+        <div id="screen2" class="screen">
+            <div class="glass-panel">
+                <img src="assets/minions.gif" class="gif-premium" alt="Minions">
+                <h2>Are you sure this is your birthday? 😄</h2>
+                <button onclick="nextScreen(3)">Yes, I'm sure!</button>
+            </div>
+        </div>
+
+        <div id="screen3" class="screen">
+            <div class="glass-panel">
+                <img src="assets/mini2.gif" class="gif-premium" alt="Minions Celebrating">
+                <h2>I know long-distance is the hardest thing...</h2>
+                <p class="subtitle">But you make every mile worth it. Many happy returns of the day Sudu Nona ❤️❤️</p>
+                <button onclick="nextScreen(4)">Reveal The Magic</button>
+            </div>
+        </div>
+
+        <div id="screen4" class="screen">
+            <video id="bdayVideo" playsinline webkit-playsinline class="premium-video">
+                <source src="assets/miniv.mp4" type="video/mp4">
+            </video>
+
+            <div id="endContent" class="hidden-finale">
+                <div class="golden-frame-container">
+                    <img src="assets/img.png" class="golden-image" alt="Our Beautiful Memory">
+                </div>
+                
+                <div class="cinematic-wish">
+                    <h2 id="finalTitle">You are the best thing in my life ❤️</h2>
+                    <p id="finalMessage">
+                        Today isn't just a celebration of the day you were born; it’s a celebration of the beautiful soul you are and the light you bring into my dark world every single day. I promise to keep choosing you, keep loving you, and keep making beautiful memories by your side.
+                    </p>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <script src="script.js"></script>

@@ -1,14 +1,32 @@
-// --- 1. 3D Scene Setup ---
+// --- 1. Premium 3D Universe Setup ---
 const scene = new THREE.Scene();
+scene.fog = new THREE.FogExp2(0x05000a, 0.002); // Deep space fog
+
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+camera.position.z = 50;
+
 const renderer = new THREE.WebGLRenderer({ canvas: document.querySelector('#bg3d'), alpha: true, antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
-camera.position.z = 45;
 
+// --- 2. Starfield (Wormhole Particles) ---
+const starGeometry = new THREE.BufferGeometry();
+const starCount = 3000; // Tons of stars for cinematic effect
+const starPositions = new Float32Array(starCount * 3);
+
+for(let i=0; i < starCount * 3; i++) {
+    starPositions[i] = (Math.random() - 0.5) * 200; // Spread stars wide
+}
+starGeometry.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
+
+const starMaterial = new THREE.PointsMaterial({
+    color: 0xffffff, size: 0.2, transparent: true, opacity: 0.8
+});
+const stars = new THREE.Points(starGeometry, starMaterial);
+scene.add(stars);
+
+// --- 3. Glowing 3D Hearts ---
 const objects = [];
-
-// Function: Create 3D Heart
-function createHeart() {
+function createPremiumHeart() {
     const shape = new THREE.Shape();
     shape.moveTo(0, 0);
     shape.bezierCurveTo(0, -3, -5, -3, -5, 0);
@@ -17,107 +35,120 @@ function createHeart() {
     shape.bezierCurveTo(5, -3, 0, -3, 0, 0);
 
     const geometry = new THREE.ExtrudeGeometry(shape, { depth: 2, bevelEnabled: true, bevelSize: 1, bevelThickness: 1 });
-    const material = new THREE.MeshPhongMaterial({ color: 0xff4d6d });
+    
+    // Premium glowing material
+    const material = new THREE.MeshStandardMaterial({ 
+        color: 0xff0055, 
+        emissive: 0x4a001a, // Glows from within
+        roughness: 0.2, metalness: 0.5 
+    });
+    
     const mesh = new THREE.Mesh(geometry, material);
     mesh.rotation.x = Math.PI;
-    mesh.scale.set(0.15, 0.15, 0.15);
+    mesh.scale.set(0.12, 0.12, 0.12);
     return mesh;
 }
 
-// Function: Create 3D Balloon
-function createBalloon() {
-    const group = new THREE.Group();
-    const body = new THREE.Mesh(new THREE.SphereGeometry(2, 20, 20), new THREE.MeshPhongMaterial({ color: 0xffd700 }));
-    body.scale.set(1, 1.3, 1);
-    const string = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 8), new THREE.MeshBasicMaterial({ color: 0xffffff }));
-    string.position.y = -6;
-    group.add(body, string);
-    group.scale.set(0.7, 0.7, 0.7);
-    return group;
-}
+// Lighting for Premium look
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
+const pointLight = new THREE.PointLight(0xff4d6d, 2, 100);
+pointLight.position.set(10, 10, 20);
+const goldLight = new THREE.PointLight(0xffd700, 1, 100); // Gold tint
+goldLight.position.set(-10, -10, 20);
+scene.add(ambientLight, pointLight, goldLight);
 
-// Setup Lights
-const light = new THREE.PointLight(0xffffff, 1, 100);
-light.position.set(10, 10, 10);
-scene.add(light, new THREE.AmbientLight(0xffffff, 0.6));
-
-// Populate 3D Objects
-for (let i = 0; i < 50; i++) {
-    const obj = Math.random() > 0.5 ? createHeart() : createBalloon();
-    obj.position.set((Math.random() - 0.5) * 100, (Math.random() - 0.5) * 100, (Math.random() - 0.5) * 40);
+// Add Hearts
+for (let i = 0; i < 30; i++) {
+    const obj = createPremiumHeart();
+    obj.position.set((Math.random() - 0.5) * 80, (Math.random() - 0.5) * 80, (Math.random() - 0.5) * 40);
     scene.add(obj);
     objects.push(obj);
 }
 
-// --- 2. Animation Loop ---
+// --- 4. Animation & Warp Speed Logic ---
+let warpSpeed = 0.05; // Normal star speed
+let isWarping = false;
+
 function animate() {
     requestAnimationFrame(animate);
-    
-    // Check if we are on Screen 4
-    const screen4 = document.getElementById('screen4');
-    const isScreen4 = screen4 && screen4.classList.contains('active');
 
-    objects.forEach(obj => {
-        if (isScreen4) {
-            obj.position.y += 0.3; // Floating UP on Screen 4
-            obj.rotation.x += 0.02;
-        } else {
-            obj.position.y -= 0.15; // Raining DOWN on other screens
-        }
+    // Starfield Movement (Warp Effect)
+    const positions = stars.geometry.attributes.position.array;
+    for(let i=2; i < starCount * 3; i+=3) {
+        positions[i] += warpSpeed; // Move stars towards camera
+        if (positions[i] > 50) positions[i] = -150; // Reset far back
+    }
+    stars.geometry.attributes.position.needsUpdate = true;
+    stars.rotation.z += 0.0005; // Slowly rotate the galaxy
 
-        // Reset positions when they go off screen
-        if (obj.position.y < -55) obj.position.y = 55;
-        if (obj.position.y > 55) obj.position.y = -55;
+    // Heart Movement
+    objects.forEach((obj, index) => {
         obj.rotation.y += 0.01;
+        obj.rotation.x += 0.005;
+        // Float gently up and down
+        obj.position.y += Math.sin(Date.now() * 0.001 + index) * 0.02; 
     });
+
     renderer.render(scene, camera);
 }
 animate();
 
-// --- 3. Navigation & Video Logic ---
+// --- 5. Cinematic Navigation ---
 function nextScreen(num) {
-    // 1. Hide all screens and remove active class
-    document.querySelectorAll(".screen").forEach(s => {
-        s.style.display = "none";
-        s.classList.remove("active");
-    });
+    const currentScreen = document.querySelector(".screen.active");
+    const nextScreenElement = document.getElementById("screen" + num);
 
-    // 2. Show the target screen
-    const currentScreen = document.getElementById("screen" + num);
-    if (currentScreen) {
-        currentScreen.style.display = "flex";
-        currentScreen.classList.add("active");
+    // Trigger WARP SPEED effect!
+    warpSpeed = 3.0; 
+    isWarping = true;
+    
+    // Fade out current text
+    if(currentScreen) {
+        currentScreen.style.opacity = "0";
+        setTimeout(() => {
+            currentScreen.classList.remove("active");
+            currentScreen.style.display = "none";
+        }, 800);
     }
 
-    // 3. Screen 4 Specific Surprise Logic
-    if (num === 4) {
-        const video = document.getElementById("bdayVideo");
-        const endContent = document.getElementById("endContent");
+    // Slow down warp speed and show next screen after delay
+    setTimeout(() => {
+        warpSpeed = 0.05; // Back to romantic slow speed
+        isWarping = false;
 
-        // Try to play the video (browsers might block sound initially)
-        video.play().catch(e => console.log("User interaction required for video"));
-
-        video.onended = () => {
-            // Fade out the video
-            video.style.opacity = "0";
-
+        if (nextScreenElement) {
+            nextScreenElement.style.display = "flex";
+            // Tiny delay to allow display:flex to apply before fading in
             setTimeout(() => {
-                video.style.display = "none";
+                nextScreenElement.classList.add("active");
+                nextScreenElement.style.opacity = "1";
+            }, 50);
+        }
 
-                // Show the Collage Image and Final Wish
-                if (endContent) {
+        // Screen 4 Reveal Logic
+        if (num === 4) {
+            const video = document.getElementById("bdayVideo");
+            const endContent = document.getElementById("endContent");
+
+            video.play().catch(e => console.log("User click required for video"));
+
+            video.onended = () => {
+                video.style.opacity = "0"; // Fade out video
+                
+                setTimeout(() => {
+                    video.style.display = "none";
                     endContent.style.display = "flex";
                     
-                    // Trigger fade-in
                     setTimeout(() => {
                         endContent.style.opacity = "1";
-                        // Romantic background change
-                        document.body.style.background = "radial-gradient(circle, #2a0033, #000)";
-                    }, 50);
-                }
-            }, 1000); // 1-second delay for fade-out
-        };
-    }
+                        // Make the background completely magical
+                        pointLight.color.setHex(0xd4af37); // Shift light to Gold
+                        warpSpeed = 0.1; // Slightly faster stars for finale
+                    }, 100);
+                }, 1000);
+            };
+        }
+    }, 1000); // 1 second in warp space
 }
 
 // Handle Window Resizing
